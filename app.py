@@ -2,6 +2,9 @@ import platform
 import psutil
 import json
 import speedtest
+from flask import Flask, jsonify
+
+app = Flask(__name__)
 
 def get_system_info():
     """Retorna as especificações do sistema."""
@@ -31,8 +34,9 @@ def get_internet_speed():
     except Exception as e:
         return {"error": f"Erro ao testar velocidade de internet: {str(e)}"}
 
-def main():
-    print("Coletando informações...")
+@app.route('/')
+def index():
+    """Endpoint principal que retorna informações do sistema e internet."""
     system_info = get_system_info()
     internet_speed = get_internet_speed()
     
@@ -40,9 +44,7 @@ def main():
         "system_info": system_info,
         "internet_speed": internet_speed,
     }
-    
-    # Imprimir os dados no formato JSON para fácil leitura
-    print(json.dumps(data, indent=4))
+    return jsonify(data)
 
 if __name__ == "__main__":
-    main()
+    app.run(debug=False,
